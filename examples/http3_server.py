@@ -31,6 +31,11 @@ try:
 except ImportError:
     uvloop = None
 
+# import the get_local_ip function from the getIPaddress.py file
+from getIPaddress import get_local_ip
+
+local_ip = get_local_ip()
+
 AsgiApplication = Callable
 HttpConnection = Union[H0Connection, H3Connection]
 
@@ -479,7 +484,6 @@ class SessionTicketStore:
     def pop(self, label: bytes) -> Optional[SessionTicket]:
         return self.tickets.pop(label, None)
 
-
 async def main(
     host: str,
     port: int,
@@ -497,8 +501,7 @@ async def main(
         retry=retry,
     )
     await asyncio.Future()
-
-
+    
 if __name__ == "__main__":
     defaults = QuicConfiguration(is_client=False)
 
@@ -526,8 +529,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--host",
         type=str,
-        default="::",
-        help="listen on the specified address (defaults to ::)",
+        default=local_ip if local_ip else "::",
+        help="listen on the specified address (defaults to local IP or ::)",
     )
     parser.add_argument(
         "--port",
@@ -619,3 +622,5 @@ if __name__ == "__main__":
         )
     except KeyboardInterrupt:
         pass
+    
+    
